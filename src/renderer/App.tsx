@@ -7,7 +7,8 @@ function App() {
       <div>
         <img src={softsyncLogo} className="logo softsync" alt="SoftSync logo" />
       </div>
-      <h1>SoftSync - Automate your work</h1>
+      <h1 >SoftSync - Automate your work</h1>
+      <input className='prompt' placeholder='Type Here'></input>
     </>
   )
 }
