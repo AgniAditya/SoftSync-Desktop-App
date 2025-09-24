@@ -1,6 +1,8 @@
 {
-  "name": "softsync-desktop-app",
+  "name": "softsync",
   "private": true,
+  "description": "softsync - AI Powered Software which is used to automate the complex creative tools such as Blender , After Effect , Unity and etc.",
+  "author": "agniaditya05@gmail.com",
   "version": "0.0.0",
   "type": "module",
   "main": "dist-electron/main.js",
