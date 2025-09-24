@@ -3,10 +3,8 @@ import { getPreloadPath } from './pathResolver.js'
 import { isDev } from './utils.js'
 import path from 'path'
 
-const createWindow = async () => {
+const createWindow = () => {
     const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 1200,
         webPreferences: {
             preload : getPreloadPath()
         }
@@ -17,7 +15,7 @@ const createWindow = async () => {
     else{
         mainWindow.loadFile(path.join(app.getAppPath(),'/dist-react/index.html'))
     }
-
+    mainWindow.maximize()
 }
 
 app.on('ready',createWindow)
