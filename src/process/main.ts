@@ -1,6 +1,6 @@
-import { app , BrowserWindow} from 'electron'
+import { app , BrowserWindow, ipcMain} from 'electron'
 import { getPreloadPath } from './pathResolver.js'
-import { isDev } from './utils.js'
+import { getAvailableLLMs, isDev } from './utils.js'
 import path from 'path'
 
 const createWindow = () => {
@@ -9,6 +9,9 @@ const createWindow = () => {
             preload : getPreloadPath()
         }
     })
+
+    ipcMain.handle('getAvailableLLMs', () => getAvailableLLMs())
+
     if(isDev()){
         mainWindow.loadURL('http://localhost:8000');
     }
