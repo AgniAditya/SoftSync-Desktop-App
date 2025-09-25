@@ -15,10 +15,10 @@ function App() {
       select.innerHTML = '<option value="" disabled selected hidden>Select a model</option>';
   
       // Add new options
-      availableLLMs.forEach((model : string) => {
+      availableLLMs.forEach((model : any) => {
         const option = document.createElement("option");
-        option.value = model.toLowerCase();
-        option.textContent = model;
+        option.value = model.name.toLowerCase();
+        option.textContent = model.name;
         select.appendChild(option);
       });
     }
