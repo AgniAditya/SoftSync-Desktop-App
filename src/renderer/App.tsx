@@ -1,7 +1,12 @@
 import softsyncLogo from './assets/logo.png'
 import './App.css'
+import { useEffect } from 'react';
 
 function App() {
+
+  useEffect(() => {
+    loadModels()
+  },[])
 
   async function loadModels() {
     //@ts-ignore
@@ -17,26 +22,34 @@ function App() {
       // Add new options
       availableLLMs.forEach((model : any) => {
         const option = document.createElement("option");
-        option.value = model.name.toLowerCase();
+        option.value = model.id;
         option.textContent = model.name;
         select.appendChild(option);
       });
     }
   }
 
-  async function getChatResponse(prompt : string , selectedModel : string) {
-    // const select = document.getElementById('llms') as HTMLSelectElement | null;
-    // if (!select) return;
-
-    // const selectedModel = select.value;
+  async function getChatResponse(prompt : string , selectedModel : HTMLSelectElement) {
+    console.log(`Your Request: ${prompt}`)
     //@ts-ignore
-    const chatResponse = await window.electron.getChatResponse(prompt,selectedModel)
-    console.log('Chat Response: ',chatResponse)
+    const chatResponse = await window.electron.getChatResponse(prompt,selectedModel.value)
+    console.log(`Chat Response:`,chatResponse)
   }
 
-  getChatResponse('Hii , I am SoftSync','deepseek/deepseek-chat-v3.1:free')
-  loadModels();
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      const input = e.currentTarget.value.trim();
+      const select = document.getElementById('llms') as HTMLSelectElement | null;
 
+      if (!input || !select || !select.value) {
+        console.warn("Missing prompt or selected model");
+        return;
+      }
+      getChatResponse(input, select);
+      e.currentTarget.value = ''; // clear input after sending
+    }
+  }
+  // getChatResponse('Hii , I am SoftSync','deepseek/deepseek-chat-v3.1:free')
 
   return (
     <>
@@ -45,7 +58,7 @@ function App() {
       </div>
       <h1 >SoftSync - Automate your work</h1>
       <div className='input-area'>
-        <input className='prompt' placeholder='Type Here'></input>
+        <input className='prompt' placeholder='Type Here' onKeyDown={handleKeyDown}></input>
         <select id='llms' defaultValue="">
           <option value="default" disabled hidden>Select a model</option>
         </select>
