@@ -19,6 +19,8 @@
     "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64"
   },
   "dependencies": {
+    "dotenv": "^17.2.2",
+    "openai": "^5.23.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

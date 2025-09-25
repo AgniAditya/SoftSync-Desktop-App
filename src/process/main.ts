@@ -1,6 +1,6 @@
 import { app , BrowserWindow, ipcMain} from 'electron'
 import { getPreloadPath } from './pathResolver.js'
-import { getAvailableLLMs, isDev } from './utils.js'
+import { getAvailableLLMs, getChatResponse, isDev } from './utils.js'
 import path from 'path'
 
 const createWindow = () => {
@@ -19,6 +19,11 @@ const createWindow = () => {
         mainWindow.loadFile(path.join(app.getAppPath(),'/dist-react/index.html'))
     }
     mainWindow.maximize()
+
+    ipcMain.handle('getChatResponse', async (
+        _,prompt: string,
+        model : string
+    ) => getChatResponse(prompt,model))
 }
 
 app.on('ready',createWindow)

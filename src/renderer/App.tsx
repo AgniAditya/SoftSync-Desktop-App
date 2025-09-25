@@ -24,6 +24,17 @@ function App() {
     }
   }
 
+  async function getChatResponse(prompt : string , selectedModel : string) {
+    // const select = document.getElementById('llms') as HTMLSelectElement | null;
+    // if (!select) return;
+
+    // const selectedModel = select.value;
+    //@ts-ignore
+    const chatResponse = await window.electron.getChatResponse(prompt,selectedModel)
+    console.log('Chat Response: ',chatResponse)
+  }
+
+  getChatResponse('Hii , I am SoftSync','deepseek/deepseek-chat-v3.1:free')
   loadModels();
 
 
@@ -35,8 +46,8 @@ function App() {
       <h1 >SoftSync - Automate your work</h1>
       <div className='input-area'>
         <input className='prompt' placeholder='Type Here'></input>
-        <select id='llms'>
-          <option value="default" disabled selected hidden>Select a model</option>
+        <select id='llms' defaultValue="">
+          <option value="default" disabled hidden>Select a model</option>
         </select>
       </div>
     </>
