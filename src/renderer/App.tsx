@@ -1,12 +1,24 @@
 import softsyncLogo from './assets/logo.png'
 import './App.css'
-import { useEffect } from 'react';
+import { useEffect , useState , useRef} from 'react';
+
+type ChatMessage = {
+  role: 'user' | 'assistant';
+  content: string;
+};
 
 function App() {
-
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [selectedModel, setSelectedModel] = useState<string>('');
+  const chatEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     loadModels()
   },[])
+
+  useEffect(() => {
+    // Scroll to bottom whenever messages update
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   async function loadModels() {
     //@ts-ignore
@@ -26,30 +38,34 @@ function App() {
         option.textContent = model.name;
         select.appendChild(option);
       });
+
+      select.addEventListener('change', (e) => {
+        const target = e.target as HTMLSelectElement;
+        setSelectedModel(target.value);
+      });
     }
   }
 
-  async function getChatResponse(prompt : string , selectedModel : HTMLSelectElement) {
+  async function getChatResponse(prompt : string) {
+    if (!prompt || !selectedModel) return;
     console.log(`Your Request: ${prompt}`)
+
+    setMessages((prev) => [...prev, { role: 'user', content: prompt }]);
+    
     //@ts-ignore
-    const chatResponse = await window.electron.getChatResponse(prompt,selectedModel.value)
+    const chatResponse = await window.electron.getChatResponse(prompt,selectedModel)
     console.log(`Chat Response:`,chatResponse)
+
+    setMessages((prev) => [...prev, { role: 'assistant', content: chatResponse }]);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       const input = e.currentTarget.value.trim();
-      const select = document.getElementById('llms') as HTMLSelectElement | null;
-
-      if (!input || !select || !select.value) {
-        console.warn("Missing prompt or selected model");
-        return;
-      }
-      getChatResponse(input, select);
+      getChatResponse(input);
       e.currentTarget.value = ''; // clear input after sending
     }
   }
-  // getChatResponse('Hii , I am SoftSync','deepseek/deepseek-chat-v3.1:free')
 
   return (
     <>
@@ -57,6 +73,17 @@ function App() {
         <img src={softsyncLogo} className="logo softsync" alt="SoftSync logo" />
       </div>
       <h1 >SoftSync - Automate your work</h1>
+      <div className="chat-window">
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`chat-message ${msg.role === 'user' ? 'user' : 'assistant'}`}
+          >
+            {msg.content}
+          </div>
+        ))}
+        <div ref={chatEndRef}></div>
+      </div>
       <div className='input-area'>
         <input className='prompt' placeholder='Type Here' onKeyDown={handleKeyDown}></input>
         <select id='llms' defaultValue="">
