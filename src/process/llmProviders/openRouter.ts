@@ -18,25 +18,30 @@ class Openrouter {
     }
 
     async processQuery(query: string , model : string) : Promise<string> {
-        this.messageContext.push({
-            role: 'user',
-            content: query
-        })
-
-        const completions = await this.openai.chat.completions.create({
-            model: model,
-            messages: this.messageContext,
-        })
-        
-        const response = completions.choices[0].message.content
-        if(!response) throw new Error(`Error while getting a response from ${model}`);
-
-        this.messageContext.push({
-            role: 'assistant',
-            content: response
-        })
-
-        return response
+        try {
+            this.messageContext.push({
+                role: 'user',
+                content: query
+            })
+    
+            const completions = await this.openai.chat.completions.create({
+                model: model,
+                messages: this.messageContext,
+            })
+            
+            const response = completions.choices[0].message.content
+            if(!response) throw new Error(`Error while getting a response from ${model}`);
+    
+            this.messageContext.push({
+                role: 'assistant',
+                content: response
+            })
+    
+            return response
+        } catch (error) {
+            console.error('Error in process query:',error)
+            throw new Error((error as Error).message)
+        }
     }
 }
 

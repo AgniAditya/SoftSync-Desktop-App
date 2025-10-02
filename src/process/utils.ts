@@ -19,6 +19,11 @@ export async function getAvailableLLMs() : Promise<any[]> {
 }
 
 export async function getChatResponse(prompt : string,model : string) : Promise<string> {
-    const response = await openrouter.processQuery(prompt,model);
-    return response;
+    try {
+        const response = await openrouter.processQuery(prompt,model);
+        return response;
+    } catch (error) {
+        console.error('Error in getChatResponse:', error)
+        throw new Error((error as Error).message)
+    }
 }

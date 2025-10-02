@@ -1,29 +1,31 @@
-import { app , BrowserWindow, ipcMain} from 'electron'
+import { app , BrowserWindow} from 'electron'
 import { getPreloadPath } from './pathResolver.js'
-import { getAvailableLLMs, getChatResponse, isDev } from './utils.js'
+import { isDev } from './utils.js'
 import path from 'path'
+import { loadIpcHandlers } from './ipcHandlers.js'
 
 const createWindow = () => {
-    const mainWindow = new BrowserWindow({
-        webPreferences: {
-            preload : getPreloadPath()
+    try {
+        const mainWindow = new BrowserWindow({
+            webPreferences: {
+                preload : getPreloadPath()
+            }
+        })
+    
+        if(isDev()){
+            mainWindow.loadURL('http://localhost:8000');
         }
-    })
+        else{
+            mainWindow.loadFile(path.join(app.getAppPath(),'/dist-react/index.html'))
+        }
+        mainWindow.maximize()
 
-    ipcMain.handle('getAvailableLLMs', () => getAvailableLLMs())
+        loadIpcHandlers()
 
-    if(isDev()){
-        mainWindow.loadURL('http://localhost:8000');
+    } catch (error) {
+        console.error(error)
+        throw new Error('Error in mainWindow.')
     }
-    else{
-        mainWindow.loadFile(path.join(app.getAppPath(),'/dist-react/index.html'))
-    }
-    mainWindow.maximize()
-
-    ipcMain.handle('getChatResponse', async (
-        _,prompt: string,
-        model : string
-    ) => getChatResponse(prompt,model))
 }
 
 app.on('ready',createWindow)
