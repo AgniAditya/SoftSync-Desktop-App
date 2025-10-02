@@ -14,7 +14,7 @@ class Openrouter {
             baseURL: 'https://openrouter.ai/api/v1',
             apiKey: openRouterApiKey,
         })
-        this.messageContext = [{ role: 'assistant', content: "You are a helpful assistant." }]
+        this.messageContext = [{ role: 'system', content: "You are a helpful assistant and funny friend." }]
     }
 
     async processQuery(query: string , model : string) : Promise<string> {
@@ -26,6 +26,7 @@ class Openrouter {
     
             const completions = await this.openai.chat.completions.create({
                 model: model,
+                temperature: 0,
                 messages: this.messageContext,
             })
             
