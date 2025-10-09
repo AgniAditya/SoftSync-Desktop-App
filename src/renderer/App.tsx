@@ -23,7 +23,8 @@ function App() {
   async function loadModels() {
     //@ts-ignore
     const availableLLMs = await window.electron.getAvailableLLMs()
-    console.log("Available Models:", availableLLMs);
+    const models = availableLLMs.data
+    console.log("Available Models:", models);
 
     const select = document.getElementById("llms");
 
@@ -32,7 +33,7 @@ function App() {
       select.innerHTML = '<option value="" disabled selected hidden>Select a model</option>';
   
       // Add new options
-      availableLLMs.forEach((model : any) => {
+      models.forEach((model : any) => {
         const option = document.createElement("option");
         option.value = model.id;
         option.textContent = model.name;
