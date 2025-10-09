@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import { envPath } from './electronUtils/electronEnv.js';
+import { envPath } from './electronEnv.js';
 
 dotenv.config({ path: envPath() })
 

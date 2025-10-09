@@ -2,7 +2,7 @@ import { app , BrowserWindow} from 'electron'
 import { getPreloadPath } from './electronUtils/electronEnv.js'
 import { isDev } from './electronUtils/electronEnv.js'
 import path from 'path'
-import { loadIpcHandlers } from './ipcHandlers.js'
+import { loadIpcHandlers } from './services/ipchandlersServices.js'
 import { apiError } from './electronUtils/apiError.js'
 
 const createWindow = () => {

@@ -1,5 +1,5 @@
 import OpenAi from 'openai'
-import { variables } from '../envVariables.js'
+import { variables } from '../electronUtils/envVariables.js'
 import { ChatCompletionMessageParam } from 'openai/resources'
 import { apiError } from '../electronUtils/apiError.js'
 import { apiResponse } from '../electronUtils/apiResponse.js'

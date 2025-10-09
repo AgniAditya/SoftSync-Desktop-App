@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { getAvailableLLMs, getChatResponse } from "./services/llmServices.js";
+import { getAvailableLLMs, getChatResponse } from "./llmServices.js";
 
 export function loadIpcHandlers() {
     ipcMain.handle('getAvailableLLMs',async () =>{
