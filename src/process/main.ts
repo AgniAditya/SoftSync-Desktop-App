@@ -1,8 +1,9 @@
 import { app , BrowserWindow} from 'electron'
-import { getPreloadPath } from './pathResolver.js'
-import { isDev } from './utils.js'
+import { getPreloadPath } from './electronUtils/electronEnv.js'
+import { isDev } from './electronUtils/electronEnv.js'
 import path from 'path'
 import { loadIpcHandlers } from './ipcHandlers.js'
+import { apiError } from './electronUtils/apiError.js'
 
 const createWindow = () => {
     try {
@@ -24,7 +25,10 @@ const createWindow = () => {
 
     } catch (error) {
         console.error(error)
-        throw new Error('Error in mainWindow.')
+        throw new apiError(
+            500,
+            (error as Error).message
+        )
     }
 }
 

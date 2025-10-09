@@ -1,6 +1,8 @@
 import OpenAi from 'openai'
 import { variables } from '../envVariables.js'
 import { ChatCompletionMessageParam } from 'openai/resources'
+import { apiError } from '../electronUtils/apiError.js'
+import { apiResponse } from '../electronUtils/apiResponse.js'
 
 const openRouterApiKey = variables.openRouterApiKey
 if(!openRouterApiKey) throw new Error('Open Router Api Key not defined')
@@ -17,7 +19,7 @@ class Openrouter {
         this.messageContext = [{ role: 'system', content: "You are a helpful assistant and funny friend." }]
     }
 
-    async processQuery(query: string , model : string) : Promise<string> {
+    async processQuery(query: string , model : string) : Promise<apiResponse> {
         try {
             this.messageContext.push({
                 role: 'user',
@@ -38,10 +40,17 @@ class Openrouter {
                 content: response
             })
     
-            return response
+            return new apiResponse(
+                200,
+                response,
+                "succesfully get the chat response"
+            )
         } catch (error) {
             console.error('Error in process query:',error)
-            throw new Error((error as Error).message)
+            throw new apiError(
+                500,
+                (error as Error).message,
+            )
         }
     }
 }

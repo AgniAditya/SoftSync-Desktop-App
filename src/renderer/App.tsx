@@ -54,9 +54,10 @@ function App() {
     
     //@ts-ignore
     const chatResponse = await window.electron.getChatResponse(prompt,selectedModel)
-    console.log(`Chat Response:`,chatResponse)
+    const message = (chatResponse.success) ? chatResponse.data : chatResponse.message
+    console.log(`Chat Response:`,message)
 
-    setMessages((prev) => [...prev, { role: 'assistant', content: chatResponse }]);
+    setMessages((prev) => [...prev, { role: 'assistant', content: message }]);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {

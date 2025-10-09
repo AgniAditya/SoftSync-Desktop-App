@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import path from "path";
-import { isDev } from './utils.js';
+import { isDev } from './electronUtils/electronEnv.js';
 import { app } from 'electron';
 
 // Decide path depending on environment
