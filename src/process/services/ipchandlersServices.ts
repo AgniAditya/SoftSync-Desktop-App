@@ -1,15 +1,19 @@
-import { ipcMain } from "electron";
-import { getAvailableLLMs, getChatResponse } from "./llmServices.js";
+import { ipcMain } from "electron"; // Import ipcMain to handle async messages from renderer process
+import { getAvailableLLMs, getChatResponse } from "./llmServices.js"; // Import LLM-related service functions
 
+// Registers IPC handlers for communication between renderer and main process
 export function loadIpcHandlers() {
-    ipcMain.handle('getAvailableLLMs',async () =>{
-        return await getAvailableLLMs()
-    })
-    
+
+    // Handle request from renderer to get list of available LLM models
+    ipcMain.handle('getAvailableLLMs', async () => {
+        return await getAvailableLLMs();
+    });
+
+    // Handle request from renderer to get chat response from a specific model
     ipcMain.handle('getChatResponse', async (
-        _,prompt: string,
-        model : string
+        _, prompt: string,  // '_' represents the event object (not used)
+        model: string       // model name passed from renderer
     ) => {
-        return await getChatResponse(prompt,model)
-    })
+        return await getChatResponse(prompt, model);
+    });
 }
