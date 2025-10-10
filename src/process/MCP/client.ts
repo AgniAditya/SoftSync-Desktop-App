@@ -33,4 +33,8 @@ export class MCPClient {
             throw new apiError(500,`failed to connect to ${this.serverInfo?.name}`)
         }
     }
+
+    isClientConnected() : boolean{
+        return this.clientConnect
+    }
 }
