@@ -29,21 +29,26 @@ export class MCPClient {
             const port = this.serverInfo.port;
             const host = this.serverInfo.host;
 
-            // Create TCP connection to the MCP server
-            this.client = net.createConnection({ port, host }, () => {
-                this.clientConnect = true; // Mark as connected once established
-                console.log(`[SoftSync Client] TCP Connection established.`);
-            });
-
-            // Handle connection errors
-            this.client.on('error', (err) => {
-                this.clientConnect = false; // Reset connection flag on error
-                console.error(`[SoftSync Client] Connection Error to ${this.serverInfo?.name}: ${err.message}`);
-            });
+            // Await the actual TCP connection
+            await new Promise<void>((resolve,reject) => {
+                // Create TCP connection to the MCP server
+                this.client = net.createConnection({ port, host }, () => {
+                    this.clientConnect = true; // Mark as connected once established
+                    console.log(`[SoftSync Client] TCP Connection established.`);
+                    resolve()
+                });
+    
+                // Handle connection errors
+                this.client.on('error', (err) => {
+                    this.clientConnect = false; // Reset connection flag on error
+                    console.error(`[SoftSync Client] Connection Error to ${this.serverInfo?.name}: ${err.message}`);
+                    reject(new apiError(500, `Connection Error to ${this.serverInfo?.name}: ${err.message}`))
+                });
+            })
 
             return new apiResponse(
                 200,
-                null,
+                this.serverInfo?.name,
                 `Successfully connected to ${this.serverInfo?.name}`)
         } catch (error) {
             // Throw standardized API error if connection fails
