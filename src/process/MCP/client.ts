@@ -1,6 +1,7 @@
 import net from "net"; // Node.js module for creating TCP network connections
 import { getMCPServerHostAndPort } from "./mcpDiscovery.js"; // Function to discover server host and port for given software
 import { apiError } from "../electronUtils/apiError.js"; // Custom API error class for standardized error handling
+import { apiResponse } from "../electronUtils/apiResponse.js";
 
 // Class to manage TCP client connection to an MCP (Modular Control Protocol) server
 export class MCPClient {
@@ -14,7 +15,7 @@ export class MCPClient {
     }
 
     // Connects the client to a specific software's MCP server
-    async connectToSoftware(softwareName: string) {
+    async connectToSoftware(softwareName: string) : Promise<apiResponse | apiError>{
         try {
             // Validate input software name
             if (!softwareName || softwareName.length === 0)
@@ -39,9 +40,14 @@ export class MCPClient {
                 this.clientConnect = false; // Reset connection flag on error
                 console.error(`[SoftSync Client] Connection Error to ${this.serverInfo?.name}: ${err.message}`);
             });
+
+            return new apiResponse(
+                200,
+                null,
+                `Successfully connected to ${this.serverInfo?.name}`)
         } catch (error) {
             // Throw standardized API error if connection fails
-            throw new apiError(500, `failed to connect to ${this.serverInfo?.name}`);
+            return new apiError(500, `failed to connect to ${this.serverInfo?.name}`);
         }
     }
 

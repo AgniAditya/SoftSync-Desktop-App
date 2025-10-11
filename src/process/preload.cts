@@ -10,6 +10,10 @@ const apis = {
     // Send a prompt and model name to main process to get chat response
     getChatResponse: (prompt : string, model : string) => {
         return electron.ipcRenderer.invoke('getChatResponse', prompt, model)
+    },
+
+    connectToMCPServer: (softwareName : string) => {
+        return electron.ipcRenderer.invoke('connectToMCPServer',softwareName)
     }
 }
 

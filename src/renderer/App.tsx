@@ -22,7 +22,12 @@ function App() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
   
-  const handleClick = () => {
+  const handleClick = async () => {
+    if(!connected){
+      //@ts-ignore
+      const isConnceted = await window.electron.connectToMCPServer('blender')
+      alert(isConnceted.message);
+    }
     setConnected(prev => !prev); // toggle state
   };
   async function loadModels() {

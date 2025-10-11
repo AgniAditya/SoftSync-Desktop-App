@@ -1,5 +1,6 @@
 import { ipcMain } from "electron"; // Import ipcMain to handle async messages from renderer process
 import { getAvailableLLMs, getChatResponse } from "./llmServices.js"; // Import LLM-related service functions
+import { connectToMCPServer } from "./mcpServices.js";
 
 // Registers IPC handlers for communication between renderer and main process
 export function loadIpcHandlers() {
@@ -16,4 +17,10 @@ export function loadIpcHandlers() {
     ) => {
         return await getChatResponse(prompt, model);
     });
+
+    ipcMain.handle('connectToMCPServer',async (
+        _, softwareName: string
+    ) => {
+        return await connectToMCPServer(softwareName)
+    })
 }
