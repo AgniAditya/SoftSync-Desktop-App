@@ -11,15 +11,20 @@ function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('');
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const [connected, setConnected] = useState(false);
+
   useEffect(() => {
     loadModels()
   },[])
-
+  
   useEffect(() => {
     // Scroll to bottom whenever messages update
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
+  
+  const handleClick = () => {
+    setConnected(prev => !prev); // toggle state
+  };
   async function loadModels() {
     //@ts-ignore
     const availableLLMs = await window.electron.getAvailableLLMs()
@@ -88,6 +93,12 @@ function App() {
       </div>
       <div className='input-area'>
         <input className='prompt' placeholder='Type Here' onKeyDown={handleKeyDown}></input>
+        <button
+        className={`connectMCP ${connected ? 'connected' : ''}`}
+        onClick={handleClick}
+      >
+        {connected ? 'MCP Connected' : 'turn on MCP'}
+      </button>
         <select id='llms' defaultValue="">
           <option value="default" disabled hidden>Select a model</option>
         </select>
