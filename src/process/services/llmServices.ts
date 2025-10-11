@@ -3,7 +3,7 @@ import { apiError } from "../electronUtils/apiError.js";    // Custom API error 
 import { apiResponse } from "../electronUtils/apiResponse.js"; // Custom API response class
 
 // Fetches the list of available LLM models from OpenRouter API
-export async function getAvailableLLMs(): Promise<apiResponse> {
+export async function getAvailableLLMs(): Promise<apiResponse | apiError> {
     const url = 'https://openrouter.ai/api/v1/models'; // OpenRouter API endpoint
     const options = { method: 'GET' };                // HTTP GET request
 
@@ -18,9 +18,8 @@ export async function getAvailableLLMs(): Promise<apiResponse> {
             "succesfully fetch the all models" // Informational message
         );
     } catch (error) {
-        console.log(error); // Log error to console
-        // Throw standardized API error
-        throw new apiError(
+        // Return standardized API error
+        return new apiError(
             500,
             (error as Error).message
         );
