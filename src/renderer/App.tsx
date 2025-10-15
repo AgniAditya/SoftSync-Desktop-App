@@ -24,15 +24,14 @@ function App() {
   
   const handleClick = async () => {
     if(!connected){
-      //@ts-ignore
       const isConnceted = await window.electron.connectToMCPServer('blender')
       alert(isConnceted.message);
     }
     setConnected(prev => !prev); // toggle state
   };
   async function loadModels() {
-    //@ts-ignore
     const availableLLMs = await window.electron.getAvailableLLMs()
+    if(!availableLLMs.success) console.log("Models not fetched");
     const models = availableLLMs.data
     console.log("Available Models:", models);
 
@@ -63,7 +62,6 @@ function App() {
 
     setMessages((prev) => [...prev, { role: 'user', content: prompt }]);
     
-    //@ts-ignore
     const chatResponse = await window.electron.getChatResponse(prompt,selectedModel)
     const message = (chatResponse.success) ? chatResponse.data : chatResponse.message
     console.log(`Chat Response:`,message)
