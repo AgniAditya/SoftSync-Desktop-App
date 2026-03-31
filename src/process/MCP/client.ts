@@ -1,58 +1,51 @@
-import net from "net"; // Node.js module for creating TCP network connections
-import { getMCPServerHostAndPort } from "./mcpDiscovery.js"; // Function to discover server host and port for given software
-import { apiError } from "../electronUtils/apiError.js"; // Custom API error class for standardized error handling
+import { apiError } from "../electronUtils/apiError.js";
 import { apiResponse } from "../electronUtils/apiResponse.js";
+import { Client } from "@modelcontextprotocol/sdk/client";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { Tool } from "@anthropic-ai/sdk/resources.js";
+import { variables } from "../electronUtils/envVariables.js";
 
 // Class to manage TCP client connection to an MCP (Modular Control Protocol) server
 export class MCPClient {
-    private clientConnect: boolean = false; // Indicates whether the client is currently connected
-    private client: net.Socket | null;      // TCP socket instance for communication
-    private serverInfo: serverinfo | null;  // Stores discovered server information
+    private clientConnect: boolean = false;
+    private mcp: Client;
+    private transport: StdioClientTransport | null = null;
+    private tools: Tool[] = [];
 
     constructor() {
-        this.client = null;                 // Initialize client socket as null
-        this.serverInfo = null;             // Initialize server info as null
+        this.mcp = new Client({name: "mcp-client-cli", version: "1.0.0" });
     }
 
     // Connects the client to a specific software's MCP server
-    async connectToSoftware(softwareName: string) : Promise<apiResponse | apiError>{
+    async connectToSoftware() : Promise<apiResponse | apiError>{
         try {
             // Validate input software name
-            if (!softwareName || softwareName.length === 0)
-                throw new apiError(400, "software not provided");
-
-            // Discover server details for the given software
-            this.serverInfo = await getMCPServerHostAndPort(softwareName);
-            console.log(`[SoftSync Client] Service Found: ${this.serverInfo.name} at ${this.serverInfo.host}:${this.serverInfo.port}`);
-
-            // Extract host and port from discovered server info
-            const port = this.serverInfo.port;
-            const host = this.serverInfo.host;
-
-            // Await the actual TCP connection
-            await new Promise<void>((resolve,reject) => {
-                // Create TCP connection to the MCP server
-                this.client = net.createConnection({ port, host }, () => {
-                    this.clientConnect = true; // Mark as connected once established
-                    console.log(`[SoftSync Client] TCP Connection established.`);
-                    resolve()
-                });
-    
-                // Handle connection errors
-                this.client.on('error', (err) => {
-                    this.clientConnect = false; // Reset connection flag on error
-                    console.error(`[SoftSync Client] Connection Error to ${this.serverInfo?.name}: ${err.message}`);
-                    reject(new apiError(500, `Connection Error to ${this.serverInfo?.name}: ${err.message}`))
-                });
+            const serverScriptPath = variables.serverPath;
+            if(!serverScriptPath) return new apiError(404,"Path is not defined");
+            
+            this.transport = new StdioClientTransport({
+                command: "node",
+                args: [serverScriptPath]
             })
+
+            await this.mcp.connect(this.transport)
+
+            this.tools = (await this.mcp.listTools()).tools.map((tool) => {
+                return {
+                    name: tool.name,
+                    description: tool.description,
+                    input_schema: tool.inputSchema
+                }
+            });
 
             return new apiResponse(
                 200,
-                this.serverInfo?.name,
-                `Successfully connected to ${this.serverInfo?.name}`)
+                this.tools.map(({name}) => name),
+                `Successfully connected`)
         } catch (error) {
             // Throw standardized API error if connection fails
-            return new apiError(500, `failed to connect to ${this.serverInfo?.name}`);
+            console.log(error)
+            return new apiError(500, `Can not connect ${error}`);
         }
     }
 
