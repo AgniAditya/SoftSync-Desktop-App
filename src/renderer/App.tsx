@@ -24,7 +24,8 @@ function App() {
   
   const handleClick = async () => {
     if(!connected){
-      const isConnceted = await window.electron.connectToMCPServer('blender')
+      const isConnceted = await window.electron.connectToMCPServer()
+      console.log(isConnceted)
       alert(isConnceted.message);
     }
     setConnected(prev => !prev); // toggle state
