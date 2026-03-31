@@ -18,9 +18,7 @@ export function loadIpcHandlers() {
         return await getChatResponse(prompt, model);
     });
 
-    ipcMain.handle('connectToMCPServer',async (
-        _, softwareName: string
-    ) => {
-        return await connectToMCPServer(softwareName)
+    ipcMain.handle('connectToMCPServer',async () => {
+        return await connectToMCPServer()
     })
 }

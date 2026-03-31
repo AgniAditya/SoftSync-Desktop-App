@@ -6,7 +6,7 @@ declare global {
         electron : {
             getAvailableLLMs: () => Promise<apiResponse | apiError>
             getChatResponse: (prompt : string, model : string) => Promise<apiResponse | apiError>
-            connectToMCPServer: (softwareName : string) => Promise<apiResponse | apiError>
+            connectToMCPServer: () => Promise<apiResponse | apiError>
         }
     }
 } 

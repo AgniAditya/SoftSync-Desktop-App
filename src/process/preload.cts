@@ -12,8 +12,8 @@ const apis = {
         return electron.ipcRenderer.invoke('getChatResponse', prompt, model)
     },
 
-    connectToMCPServer: (softwareName : string) => {
-        return electron.ipcRenderer.invoke('connectToMCPServer',softwareName)
+    connectToMCPServer: () => {
+        return electron.ipcRenderer.invoke('connectToMCPServer')
     }
 }
 

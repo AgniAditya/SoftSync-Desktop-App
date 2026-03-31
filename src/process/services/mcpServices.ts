@@ -1,6 +1,6 @@
 import { MCPClient } from '../MCP/client.js'
 
-export async function connectToMCPServer(softwareName: string){
+export async function connectToMCPServer(){
     const client = new MCPClient()
-    return await client.connectToSoftware(softwareName)
+    return await client.connectToSoftware()
 }
