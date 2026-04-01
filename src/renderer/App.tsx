@@ -74,7 +74,7 @@ function App() {
     if (e.key === 'Enter') {
       const input = e.currentTarget.value.trim();
       getChatResponse(input);
-      e.currentTarget.value = ''; // clear input after sending
+      e.currentTarget.value = '';
     }
   }
 

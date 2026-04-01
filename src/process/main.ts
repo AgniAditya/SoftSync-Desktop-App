@@ -1,9 +1,9 @@
-import { app, BrowserWindow } from 'electron'                 // Import core Electron modules
-import { getPreloadPath } from './electronUtils/electronEnv.js' // Get path to preload script
-import { isDev } from './electronUtils/electronEnv.js'          // Check if environment is development
-import path from 'path'                                         // Node.js path module for handling file paths
-import { loadIpcHandlers } from './services/ipchandlersServices.js' // Load IPC handlers for main <-> renderer communication
-import { apiError } from './electronUtils/apiError.js'          // Custom API error class for error handling
+import { app, BrowserWindow } from 'electron'
+import { getPreloadPath } from './electronUtils/electronEnv.js'
+import { isDev } from './electronUtils/electronEnv.js'
+import path from 'path'
+import { loadIpcHandlers } from './services/ipchandlersServices.js'
+import { apiError } from './electronUtils/apiError.js'
 
 // Function to create the main application window
 const createWindow = () => {
@@ -11,29 +11,26 @@ const createWindow = () => {
         // Create the main browser window
         const mainWindow = new BrowserWindow({
             webPreferences: {
-                preload: getPreloadPath() // Attach preload script (for secure communication)
+                preload: getPreloadPath()
             }
         })
     
         // Load the correct URL depending on environment
         if (isDev()) {
-            mainWindow.loadURL('http://localhost:8000') // Load from dev server
+            mainWindow.loadURL('http://localhost:8000')
         } else {
-            mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html')) // Load production build
+            mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'))
         }
 
-        mainWindow.maximize() // Open window in maximized mode
-
-        loadIpcHandlers() // Initialize IPC event handlers for app logic
-
+        mainWindow.maximize()
+        loadIpcHandlers()
     } catch (error) {
-        console.error(error) // Log error to console
+        console.error(error)
         throw new apiError(
             500,
-            (error as Error).message // Wrap error in custom apiError class
+            (error as Error).message
         )
     }
 }
 
-// When Electron has finished initialization, create the main window
 app.on('ready', createWindow)
